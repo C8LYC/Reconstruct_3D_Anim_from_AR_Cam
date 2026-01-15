@@ -105,11 +105,23 @@ public class PCBoneController : MonoBehaviour
     [Tooltip("The root bone of the skeleton.")]
     Transform m_SkeletonRoot;
 
+    public bool ballTest = false;
+
     Transform[] m_BoneMapping = new Transform[k_NumSkeletonJoints];
 
     private void Awake()
     {
         InitializeSkeletonJoints();
+    }
+
+    private void Start() {
+        if(ballTest)
+        {
+            for (int i = 0 ; i < k_NumSkeletonJoints; i++)
+            {
+                
+            }
+        }
     }
 
     public void InitializeSkeletonJoints()
@@ -124,17 +136,40 @@ public class PCBoneController : MonoBehaviour
         }
     }
 
-    // === 重點修改：此函式現在接收我們自定義的 JointData，而不是 AR 的數據 ===
     public void ApplyRemotePose(SkeletonProtocol.JointData[] jointDataList)
     {
-        if (jointDataList == null || jointDataList.Length != k_NumSkeletonJoints) return;
+        // 確保資料存在且長度符合 91 點
+        if (jointDataList == null || jointDataList.Length != k_NumSkeletonJoints) 
+        {
+            // 如果長度不對，可能是收到 ReducedMode，這裡做個簡單相容
+            if (jointDataList != null && jointDataList.Length == SkeletonProtocol.ReducedJointCount)
+            {
+                ApplyReducedPose(jointDataList);
+            }
+            return;
+        }
 
         for (int i = 0; i < k_NumSkeletonJoints; ++i)
         {
             var bone = m_BoneMapping[i];
             if (bone != null)
             {
-                // 套用接收到的位置與旋轉
+                // 因為是 91 點對應，i 直接就是 Unity 的 Joint Index
+                bone.localPosition = jointDataList[i].position;
+                bone.localRotation = jointDataList[i].rotation; // 啟用旋轉以重現精確動作
+            }
+        }
+    }
+
+    // 備用的 Reduced 處理 (以防萬一手機切換模式)
+    private void ApplyReducedPose(SkeletonProtocol.JointData[] jointDataList)
+    {
+        for (int i = 0; i < jointDataList.Length; i++)
+        {
+            int originalIndex = SkeletonProtocol.ReducedIndices[i];
+            var bone = m_BoneMapping[originalIndex];
+            if (bone != null)
+            {
                 bone.localPosition = jointDataList[i].position;
                 bone.localRotation = jointDataList[i].rotation;
             }
