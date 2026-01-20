@@ -47,6 +47,7 @@ public class SkeletonProtocol
         using (var reader = new BinaryReader(ms))
         {
             int count = reader.ReadInt32();
+            //Debug.Log("Recieve joint count : " +  count);
             JointData[] joints = new JointData[count];
 
             for (int i = 0; i < count; i++)
@@ -65,6 +66,7 @@ public class SkeletonProtocol
                 );
 
                 joints[i] = new JointData { position = pos, rotation = rot };
+                //Debug.Log("joint "+  i +" pos : " + pos + ", rot : " + rot);
             }
             return joints;
         }

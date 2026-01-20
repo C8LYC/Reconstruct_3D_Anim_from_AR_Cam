@@ -67,6 +67,7 @@ public class PCUdpReceiver : MonoBehaviour
             {
                 boneController.ApplyRemotePose(latestJointData);
                 latestJointData = null; // 清空以避免重複套用
+                Debug.Log("End ApplyRemotePose");
             }
         }
     }

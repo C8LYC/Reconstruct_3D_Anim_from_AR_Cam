@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PCBoneController : MonoBehaviour
 {
@@ -105,6 +106,8 @@ public class PCBoneController : MonoBehaviour
     [Tooltip("The root bone of the skeleton.")]
     Transform m_SkeletonRoot;
 
+    public BoneToPythonSender boneToPythonSender;
+
     Transform[] m_BoneMapping = new Transform[k_NumSkeletonJoints];
 
     private void Awake()
@@ -132,16 +135,19 @@ public class PCBoneController : MonoBehaviour
         for (int i = 0; i < k_NumSkeletonJoints; ++i)
         {
             var bone = m_BoneMapping[i];
+            
             if (bone != null)
             {
                 // 套用接收到的位置與旋轉
                 bone.localPosition = jointDataList[i].position;
                 bone.localRotation = jointDataList[i].rotation;
-            }
+                //Debug.Log("joint " + i + " applied to " + bone.name + ", local pos : " + jointDataList[i].position + ", applied local pos : " + bone.localPosition);
+
+			}
         }
+
+        boneToPythonSender.SendBodyData();
     }
-
-
 
     void ProcessJoint(Transform joint)
     {
@@ -149,6 +155,14 @@ public class PCBoneController : MonoBehaviour
         if (index >= 0 && index < k_NumSkeletonJoints)
         {
             m_BoneMapping[index] = joint;
+            for(int i = 0; i < 14; i++)
+            {
+                if(BoneToPythonSender.ReducedIndices[i] == index)
+                {
+                    boneToPythonSender.jointObjects[i] = joint;
+                    break;
+                }
+            }
         }
         else
         {
