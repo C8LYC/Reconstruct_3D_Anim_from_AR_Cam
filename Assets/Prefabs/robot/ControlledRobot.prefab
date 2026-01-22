@@ -2271,6 +2271,7 @@ GameObject:
   - component: {fileID: 4101419520308672193}
   - component: {fileID: 1125940868004950902}
   - component: {fileID: 7082850989127177599}
+  - component: {fileID: 7636802432715532107}
   m_Layer: 0
   m_Name: ControlledRobot
   m_TagString: Untagged
@@ -2330,6 +2331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SkeletonRoot: {fileID: 8042552139683642379}
+  boneToPythonSender: {fileID: 7636802432715532107}
 --- !u!114 &7082850989127177599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2343,6 +2345,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 8080
+--- !u!114 &7636802432715532107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6790265602204177959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6d184ea5eff9a4bbe6f1ff53631e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: 127.0.0.1
+  port: 5005
+  jointObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &6983812444115934447
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,13 +12,13 @@ public class BoneToPythonSender : MonoBehaviour
     public int port = 5005;
     private UdpClient client;
 
-    // 包含：51(頭), 19,63(肩), 21,65(肘), 22,66(腕), 1(腰), 2,7(髖), 3,8(膝), 4,9(踝)
+    // 包含：51(頭), 20(左肩),64(右肩), 21(左手肘),65(右手肘), 22(左手腕),66(右手腕), 1(腰), 2(左髖),7(右髖), 3(左膝),8(右膝), 4(左腳踝),9(右腳踝)
     public static readonly int[] ReducedIndices = new int[14] 
     {
-        51, 19, 63, 21, 65, 22, 66, 1, 2, 7, 3, 8, 4, 9
+        51, 20, 64, 21, 65, 22, 66, 1, 2, 7, 3, 8, 4, 9
     };
 
-    public Transform[] jointObjects = new Transform[14]; 
+    public Transform[] jointObjects;
 
     void Start() => client = new UdpClient();
 
@@ -38,7 +38,7 @@ public class BoneToPythonSender : MonoBehaviour
             // 使用非同步發送，確保不影響 AR 渲染效能 (避免掉幀)
             byte[] bytes = SkeletonProtocol.Pack(data);
             client.BeginSend(bytes, bytes.Length, ip, port, null, null);
-            Debug.Log("Sent UDP packet with " + data.Length + " joints.");
+            //Debug.Log("Sent UDP packet with " + data.Length + " joints.");
 
         }
         catch (System.Exception e)

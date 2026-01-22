@@ -108,15 +108,17 @@ public class PCBoneController : MonoBehaviour
 
     public BoneToPythonSender boneToPythonSender;
 
-    Transform[] m_BoneMapping = new Transform[k_NumSkeletonJoints];
+    public Transform[] m_BoneMapping = new Transform[k_NumSkeletonJoints];
 
     private void Awake()
     {
         InitializeSkeletonJoints();
     }
 
+    [ContextMenu("Initialize Skeleton Joints")]
     public void InitializeSkeletonJoints()
     {
+        Debug.Log("Initializing skeleton joints...");
         Queue<Transform> nodes = new Queue<Transform>();
         nodes.Enqueue(m_SkeletonRoot);
         while (nodes.Count > 0)
@@ -125,6 +127,46 @@ public class PCBoneController : MonoBehaviour
             for (int i = 0; i < next.childCount; ++i) nodes.Enqueue(next.GetChild(i));
             ProcessJoint(next);
         }
+    }
+
+    void ProcessJoint(Transform joint)
+    {
+        int index = GetJointIndex(joint.name);
+        if (index >= 0 && index < k_NumSkeletonJoints)
+        {
+            m_BoneMapping[index] = joint;
+            for(int i = 0; i < 14; i++)
+            {
+                if(BoneToPythonSender.ReducedIndices[i] == index)
+                {
+                    Debug.Log($"Mapping joint '{joint.name}' to BoneToPythonSender.jointObjects[{i}] (index {index})");
+                    boneToPythonSender.jointObjects[i] = joint;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"{joint.name} was not found.");
+        }
+    }
+
+    public int GetBoneMappingIndex(Transform joint)
+    {
+        if (joint == null)
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < m_BoneMapping.Length; i++)
+        {
+            if (m_BoneMapping[i] == joint)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     // === 重點修改：此函式現在接收我們自定義的 JointData，而不是 AR 的數據 ===
@@ -147,27 +189,6 @@ public class PCBoneController : MonoBehaviour
         }
 
         boneToPythonSender.SendBodyData();
-    }
-
-    void ProcessJoint(Transform joint)
-    {
-        int index = GetJointIndex(joint.name);
-        if (index >= 0 && index < k_NumSkeletonJoints)
-        {
-            m_BoneMapping[index] = joint;
-            for(int i = 0; i < 14; i++)
-            {
-                if(BoneToPythonSender.ReducedIndices[i] == index)
-                {
-                    boneToPythonSender.jointObjects[i] = joint;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"{joint.name} was not found.");
-        }
     }
 
     // Returns the integer value corresponding to the JointIndices enum value
